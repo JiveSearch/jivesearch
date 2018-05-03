@@ -45,6 +45,7 @@ go get -u github.com/jivesearch/jivesearch
 cd $HOME/go/src/github.com/jivesearch/jivesearch && go test -cover -race ./...
 ```
 
+5. Install dependencies
 
 ##### Crawler
 Requires Elasticsearch and Redis.
