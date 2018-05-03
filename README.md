@@ -103,6 +103,14 @@ Marked items indicate progress has been made in that category. There is much mor
 - [ ] News
 - [ ] Shopping
 - [ ] Custom Themes
+- [ ] New name/ logo
+- [ ] Documentation
+    - [ ] Translate to Chinese, French and other languages
+    - [ ] How does Jive Search work? (link to /about page)
+        - [ ] How do we take care of privacy?
+ - [ ] Test and benchmark
+    
+    
   
 ## 📙 Documentation
 Jive Search's documentation is hosted on GoDoc Page at [here](https://godoc.org/github.com/jivesearch/jivesearch).
