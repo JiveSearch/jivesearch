@@ -270,6 +270,13 @@ func New() *Bangs {
 			[]fn{},
 		},
 		{
+			"Movie DB", []string{"moviedb"},
+			map[string]string{
+				def: "https://www.themoviedb.org/search?query={{{term}}}",
+			},
+			[]fn{},
+		},
+		{
 			"New York Times", []string{"nyt", "nytimes", "newyorktimes"},
 			map[string]string{
 				def: "http://query.nytimes.com/search/sitesearch/#/{{{term}}}/",
@@ -280,6 +287,13 @@ func New() *Bangs {
 			"Reddit", []string{"reddit"},
 			map[string]string{
 				def: "https://www.reddit.com/search?q={{{term}}}&restrict_sr=&sort=relevance&t=all",
+			},
+			[]fn{},
+		},
+		{
+			"Rotten Tomatoes", []string{"rt"},
+			map[string]string{
+				def: "https://www.rottentomatoes.com/search/?search={{{term}}}",
 			},
 			[]fn{},
 		},
@@ -301,6 +315,13 @@ func New() *Bangs {
 			"Steam", []string{"steam"},
 			map[string]string{
 				def: "http://store.steampowered.com/search/?term={{{term}}}",
+			},
+			[]fn{},
+		},
+		{
+			"TV Database", []string{"tvdb"},
+			map[string]string{
+				def: "https://www.thetvdb.com/?string={{{term}}}&tab=listseries&function=Search",
 			},
 			[]fn{},
 		},
