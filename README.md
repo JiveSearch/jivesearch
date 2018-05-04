@@ -104,7 +104,7 @@ Requires Elasticsearch and PostgreSQL.
 $ cd $GOPATH/src/github.com/jivesearch/jivesearch/frontend && go run ./cmd/frontend.go --debug=true
 ```
 
-
+```bash
 cd $GOPATH/src/github.com/jivesearch/jivesearch/frontend && go run ./cmd/frontend.go --debug=true
 ```
 
@@ -131,6 +131,7 @@ Download MusicBrainz [here](https://picard.musicbrainz.org/downloads/)
 
 <br>
 
+```bash
 cd $GOPATH/src/github.com/jivesearch/jivesearch/instant/wikipedia/cmd/dumper && go run dumper.go --workers=3 --dir=/path/to/wiki/files --text=true --data=true --truncate=400
 ```
 
@@ -195,8 +196,7 @@ Want to contribute? Great!
 Search for existing and closed issues. If your problem or idea is not addressed yet, please open a new issue [here](https://github.com/jivesearch/jivesearch/issues/new).
 
 <br>
-
-  
+ 
 ## 📙 Documentation
 Jive Search's documentation is hosted on GoDoc Page at [here](https://godoc.org/github.com/jivesearch/jivesearch).
 
