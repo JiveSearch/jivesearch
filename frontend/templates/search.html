@@ -438,7 +438,7 @@
               }            
             </style>
           </defs>            
-          <g><text id="logo" x="7" y="35" fill="#000">Jive Search</text></g>
+          <g><text id="logo" x="7" y="35" fill="#000">{{if .Brand.Name}}{{.Brand.Name}}{{else}}Jive Search{{end}}</text></g>
         </svg>
         {{end}}
         {{template "search_form" .}}
