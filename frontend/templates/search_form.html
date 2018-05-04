@@ -11,7 +11,7 @@
       </style>
     </defs>
     <g>
-      <text id="logo" x="7" y="37" fill="#000">Jive Search</text>
+      <text id="logo" x="7" y="37" fill="#000">{{if .Brand.Name}}{{.Brand.Name}}{{else}}Jive Search{{end}}</text>
     </g>
   </svg>
   {{end}}
@@ -83,8 +83,9 @@
   <p style="padding-top:5px;">No results for <strong>{{.Context.Q}}</strong></p>
   <p>Suggestions:</p>
   <ul>
-    <li>Learn how to spell.</li>
-    <li>Try something else.</li>
+    <li>Check your spelling.</li>
+    <li>Try alternate search terms.</li>
+    <li>Help us improve: visit the <a href="https://github.com/jivesearch/jivesearch" target="_blank">project page</a> and submit a bug report or feature suggestion.</li>
   </ul>
 </div>
 {{end}}

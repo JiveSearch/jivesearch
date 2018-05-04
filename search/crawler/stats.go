@@ -59,7 +59,7 @@ func (s *Stats) String() string {
 	stats += fmt.Sprintf("[stats] Rate: %v per second, %v per minute, %v per hour, %v per day\n",
 		humanize.Comma(rps), humanize.Comma(rps*60), humanize.Comma(rps*60*60), humanize.Comma(rps*60*60*24))
 
-	stats += fmt.Sprint("[stats]")
+	stats += fmt.Sprint("[stats] Status codes: ")
 
 	keys := []string{}
 	for k := range codes {
