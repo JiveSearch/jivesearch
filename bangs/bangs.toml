@@ -277,6 +277,13 @@
         default = "https://www.hulu.com/search?query={{{term}}}"
 
 [[bang]]
+    name = "IFTTT"
+    favicon = "https://ifttt.com/favicon.ico"
+    triggers = ["ifttt"]
+    [bang.regions]
+        default = "https://ifttt.com/search/query/{{{term}}}"
+
+[[bang]]
     name = "IMDb"
     favicon = "https://ia.media-imdb.com/images/G/01/imdb/images/favicon-2165806970"
     triggers = ["imdb"]
@@ -401,6 +408,13 @@
     triggers = ["t", "tw", "twitter"]
     [bang.regions]
         default = "https://twitter.com/search?q={{{term}}}"
+
+[[bang]]
+    name = "Twitch"
+    favicon = "https://static.twitchcdn.net/assets/favicon-75270f9df2b07174c23c.ico"
+    trigggers = ["twitch"]
+    [bang.regions]
+        default = "https://www.twitch.tv/{{{term}}}"
 
 [[bang]]
     name = "Ultimate Guitar Tabs"
