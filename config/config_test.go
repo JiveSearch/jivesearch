@@ -34,6 +34,8 @@ func TestSetDefaults(t *testing.T) {
 		{"elasticsearch.search.type", "document"},
 		{"elasticsearch.bangs.index", "test-bangs"},
 		{"elasticsearch.bangs.type", "bang"},
+		{"elasticsearch.image.index", "test-images"},
+		{"elasticsearch.image.type", "image"},
 		{"elasticsearch.query.index", "test-queries"},
 		{"elasticsearch.query.type", "query"},
 		{"elasticsearch.robots.index", "test-robots"},

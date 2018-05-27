@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	img "github.com/jivesearch/jivesearch/search/image"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 	"golang.org/x/net/html/charset"
@@ -215,7 +216,7 @@ func (d *Document) SetTokenizer(b io.Reader) error {
 }
 
 // SetContent parses the html and sets the language, title, description, extracts links, etc.
-func (d *Document) SetContent(bot string, maxLinks int, ch chan string,
+func (d *Document) SetContent(bot string, maxLinks int, links chan string, images chan *img.Image,
 	truncateTitle, truncateKeywords, truncateDescription int) error {
 
 	var collected int
@@ -258,7 +259,7 @@ func (d *Document) SetContent(bot string, maxLinks int, ch chan string,
 					lnk, _ := getAttribute(t, "href")
 					if lnk != d.ID {
 						d.canonical = lnk
-						ch <- lnk
+						links <- lnk
 					}
 				}
 			case atom.Title:
@@ -291,10 +292,27 @@ func (d *Document) SetContent(bot string, maxLinks int, ch chan string,
 					rel, _ := getAttribute(t, "rel")
 					if !contains(strings.Fields(rel), "nofollow") {
 						href, _ := getAttribute(t, "href")
-						d.handleLink(href, ch)
-						collected++
+						u, err := d.handleLink(href)
+						if err == nil {
+							links <- u
+							collected++
+						}
 					}
 				}
+			case atom.Img:
+				src, _ := getAttribute(t, "src")
+				u, err := d.handleLink(src)
+				if err != nil {
+					continue
+				}
+
+				img, err := img.New(u)
+				if err != nil {
+					continue
+				}
+
+				img.Alt, _ = getAttribute(t, "alt")
+				images <- img
 			case atom.Time:
 				// There are a few ways to get the creation date (or modified) date of the document:
 
@@ -373,29 +391,32 @@ func contains(s []string, val string) bool {
 	return false
 }
 
-func (d *Document) handleLink(href string, ch chan string) {
+func (d *Document) handleLink(href string) (string, error) {
+	var err = fmt.Errorf("invalid url")
+
 	if len(href) < 3 || len(href) > 2083 {
-		return
+		return "", err
 	}
 
 	// escape any invalid characters
 	// need to check utf8.ValidString(href) afterwords??
-	var err error
 	href, err = url.QueryUnescape(url.QueryEscape(href))
 	if err != nil {
-		return
+		return "", err
 	}
 
 	// maybe use url.ParseRequestURI instead????
 	u, err := url.Parse(href)
 	if err != nil {
-		return
+		return "", err
 	}
 
 	u = d.URL.ResolveReference(u)
 	if u.String() != d.ID && (u.Scheme == "http" || u.Scheme == "https") {
-		ch <- u.String()
+		return u.String(), nil
 	}
+
+	return "", err
 }
 
 func getAttribute(t html.Token, key string) (string, bool) {

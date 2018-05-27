@@ -155,6 +155,34 @@
         default = "https://askubuntu.com/search?q={{{term}}}"
 
 [[bang]]
+    name = "Ask.com"
+    favicon = "http://www.search.ask.com/favicon.ico"
+    triggers = ["ask", "jeeves"]
+    [bang.regions]
+        default = "http://www.search.ask.com/web?q={{{term}}}"
+
+[[bang]]
+    name = "AutoZone"
+    favicon = "https://www.autozone.com/favicon.ico"
+    triggers = ["azo", "autozone"]
+    [bang.regions]
+        default = "https://www.autozone.com/searchresult?searchText={{{term}}}"
+
+[[bang]]
+    name = "AWS Documentation"
+    favicon = "https://aws.amazon.com/favicon.ico"
+    triggers = ["aws"]
+    [bang.regions]
+        default = "https://aws.amazon.com/search/?searchQuery={{{term}}}"
+
+[[bang]]
+    name = "A-ZFonts"
+    favicon = "https://www.azfonts.net/images/favicon.ico"
+    triggers = ["azfonts"]
+    [bang.regions]
+        default = "https://www.azfonts.net/search.html?query={{{term}}}"
+
+[[bang]]
     name = "AZLyrics"
     favicon = "https://www.azlyrics.com/favicon.ico"
     triggers = ["azl", "azlyrics"]

@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/jivesearch/jivesearch/search/document"
+	img "github.com/jivesearch/jivesearch/search/image"
 
 	"github.com/jivesearch/jivesearch/config"
 	"github.com/jivesearch/jivesearch/log"
@@ -39,10 +40,12 @@ type Crawler struct {
 	wg    sync.WaitGroup
 	stats *Stats
 	Backend
+	ImageBackend
 }
 
 type channels struct {
 	links  chan string
+	images chan *img.Image
 	ch     chan string
 	cancel chan bool
 	err    chan error
@@ -65,6 +68,12 @@ type Backend interface {
 	Setup() error
 	CrawledAndCount(u, domain string) (time.Time, int, error) // gotta be a better name for this
 	Upsert(*document.Document) error
+}
+
+// ImageBackend outlines methods to save image links
+type ImageBackend interface {
+	Setup() error
+	Upsert(*img.Image) error
 }
 
 var now = func() time.Time { return time.Now().UTC() }
@@ -94,6 +103,7 @@ func New(cfg config.Provider) *Crawler {
 		},
 		channels: channels{
 			links:  make(chan string),
+			images: make(chan *img.Image),
 			ch:     make(chan string),
 			cancel: make(chan bool),
 			err:    make(chan error),
@@ -109,6 +119,7 @@ func (c *Crawler) Start(t time.Duration) error {
 	defer cancel()
 
 	go c.linkHandler()
+	go c.imageHandler()
 	go c.startQueue()
 
 	go func() {
@@ -140,6 +151,7 @@ func (c *Crawler) Start(t time.Duration) error {
 	time.Sleep(1 * time.Second) // w/out we get a race condition in our tests (code smell)
 	c.wg.Wait()
 	close(c.links)
+	close(c.images)
 
 	return err
 }
@@ -148,6 +160,15 @@ func (c *Crawler) linkHandler() {
 	for lnk := range c.links {
 		if err := c.Queue.AddLink(lnk); err != nil {
 			c.err <- errors.Wrapf(err, "%q", lnk)
+			return
+		}
+	}
+}
+
+func (c *Crawler) imageHandler() {
+	for img := range c.images {
+		if err := c.ImageBackend.Upsert(img); err != nil {
+			c.err <- errors.Wrapf(err, "unable to insert image: %v", img.ID)
 			return
 		}
 	}
@@ -283,7 +304,7 @@ func (c *Crawler) work(lnk string) {
 			maxLinks = 0
 		}
 
-		if err := doc.SetContent(c.UserAgent.Short, maxLinks, c.links,
+		if err := doc.SetContent(c.UserAgent.Short, maxLinks, c.links, c.images,
 			c.truncate.title, c.truncate.keywords, c.truncate.description); err != nil {
 			log.Debug.Printf("document parsing error: %v\n%v", doc.ID, err)
 		}

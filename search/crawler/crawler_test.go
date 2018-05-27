@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/jivesearch/jivesearch/search/document"
+	img "github.com/jivesearch/jivesearch/search/image"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/jivesearch/jivesearch/search/crawler/robots"
@@ -118,6 +119,7 @@ func TestStart(t *testing.T) {
 		},
 		channels: channels{
 			links:  make(chan string),
+			images: make(chan *img.Image),
 			ch:     make(chan string),
 			cancel: make(chan bool),
 			err:    make(chan error),

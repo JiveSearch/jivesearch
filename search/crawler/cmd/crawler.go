@@ -18,6 +18,7 @@ import (
 	"github.com/jivesearch/jivesearch/search/crawler/queue"
 	"github.com/jivesearch/jivesearch/search/crawler/robots"
 	"github.com/jivesearch/jivesearch/search/document"
+	img "github.com/jivesearch/jivesearch/search/image"
 	"github.com/olivere/elastic"
 	"github.com/spf13/viper"
 )
@@ -114,6 +115,18 @@ func main() {
 	}
 
 	if err := c.Backend.Setup(); err != nil {
+		panic(err)
+	}
+
+	// setup our image index
+	c.ImageBackend = &img.ElasticSearch{
+		Client: client,
+		Index:  v.GetString("elasticsearch.image.index"),
+		Type:   v.GetString("elasticsearch.image.type"),
+		Bulk:   bulk,
+	}
+
+	if err := c.ImageBackend.Setup(); err != nil {
 		panic(err)
 	}
 

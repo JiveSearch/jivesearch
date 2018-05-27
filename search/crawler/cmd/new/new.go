@@ -17,6 +17,7 @@ import (
 	"github.com/jivesearch/jivesearch/log"
 	"github.com/jivesearch/jivesearch/search/crawler"
 	"github.com/jivesearch/jivesearch/search/document"
+	img "github.com/jivesearch/jivesearch/search/image"
 	"github.com/olivere/elastic"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -84,6 +85,18 @@ func main() {
 		panic(err)
 	}
 
+	// setup our image index
+	imgBackend := &img.ElasticSearch{
+		Client: client,
+		Index:  v.GetString("elasticsearch.image.index"),
+		Type:   v.GetString("elasticsearch.image.type"),
+		Bulk:   bulk,
+	}
+
+	if err := imgBackend.Setup(); err != nil {
+		panic(err)
+	}
+
 	c := colly.NewCollector(
 		//colly.Async(true), // not necessary with Queue
 		colly.UserAgent(v.GetString("crawler.useragent.full")),
@@ -125,7 +138,9 @@ func main() {
 	})
 
 	links := make(chan string)
+	images := make(chan *img.Image)
 	defer close(links)
+	defer close(images)
 
 	uaShort := v.GetString("crawler.useragent.short")
 
@@ -160,8 +175,8 @@ func main() {
 				return
 			}
 
-			// TODO: image (& video?) search and extract some of the text of pdf files.
-			// Note: some html is mismarked as text/xml
+			// TODO: extract some of the text of pdf files.
+			// Note: some html is mismarked as text/xml.
 			if doc.MIME != "text/plain" && doc.MIME != "text/html" && doc.MIME != "text/xml" {
 				return
 			}
@@ -177,7 +192,7 @@ func main() {
 				maxLinks = 0
 			}
 
-			if err := doc.SetContent(uaShort, maxLinks, links,
+			if err := doc.SetContent(uaShort, maxLinks, links, images,
 				v.GetInt("crawler.truncate.title"), v.GetInt("crawler.truncate.keywords"), v.GetInt("crawler.truncate.description")); err != nil {
 				log.Debug.Printf("document parsing error: %v\n%v", doc.ID, err)
 			}
@@ -206,6 +221,7 @@ func main() {
 	}
 
 	go linkHandler(q, links, errs)
+	go imageHandler(imgBackend, q, images, errs)
 
 	go func() {
 		ctx, cancel := context.WithTimeout(context.TODO(), v.GetDuration("crawler.time"))
@@ -228,6 +244,15 @@ func linkHandler(q *queue.Queue, links chan string, errs chan error) {
 	for lnk := range links {
 		if err := q.AddURL(lnk); err != nil {
 			errs <- errors.Wrapf(err, "%q", lnk)
+			return
+		}
+	}
+}
+
+func imageHandler(b *img.ElasticSearch, q *queue.Queue, images chan *img.Image, errs chan error) {
+	for img := range images {
+		if err := b.Upsert(img); err != nil {
+			errs <- errors.Wrapf(err, "unable to insert image: %v", img.ID)
 			return
 		}
 	}

@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	img "github.com/jivesearch/jivesearch/search/image"
 	"golang.org/x/text/language"
 )
 
@@ -292,6 +293,7 @@ func TestSetContent(t *testing.T) {
 		links               []string
 		maxLinks            int
 		ch                  chan string
+		images              chan *img.Image
 		truncateTitle       int
 		truncateKeywords    int
 		truncateDescription int
@@ -431,7 +433,7 @@ func TestSetContent(t *testing.T) {
 				t.Fatalf("expected nil error; got %q", err)
 			}
 
-			err = d.SetContent("", c.maxLinks, c.ch,
+			err = d.SetContent("", c.maxLinks, c.ch, c.images,
 				c.truncateTitle, c.truncateKeywords, c.truncateDescription)
 
 			if err != nil {

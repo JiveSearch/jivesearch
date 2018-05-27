@@ -49,6 +49,9 @@ func SetDefaults(cfg Provider) {
 	cfg.SetDefault("elasticsearch.bangs.index", "test-bangs")
 	cfg.SetDefault("elasticsearch.bangs.type", "bang")
 
+	cfg.SetDefault("elasticsearch.image.index", "test-images")
+	cfg.SetDefault("elasticsearch.image.type", "image")
+
 	cfg.SetDefault("elasticsearch.query.index", "test-queries")
 	cfg.SetDefault("elasticsearch.query.type", "query")
 
